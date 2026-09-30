@@ -46,7 +46,9 @@ struct RecorderSheet: View {
         let target = idea ?? Idea()
         if idea == nil { context.insert(target) }
         let note = VoiceNote(fileName: result.fileName, duration: result.duration)
-        target.voiceNotes.append(note)
+        note.audioData = try? Data(contentsOf: note.fileURL)
+        if target.voiceNotes == nil { target.voiceNotes = [] }
+        target.voiceNotes?.append(note)
         target.updatedAt = .now
         try? context.save()
         dismiss()

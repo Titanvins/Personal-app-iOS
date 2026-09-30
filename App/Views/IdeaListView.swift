@@ -21,7 +21,7 @@ struct IdeaListView: View {
             switch filter {
             case .all: true
             case .pinned: idea.isPinned
-            case .voice: !idea.voiceNotes.isEmpty
+            case .voice: !idea.notes.isEmpty
             case .links: idea.sourceURL != nil
             }
         }.filter {
@@ -123,7 +123,7 @@ private struct IdeaRow: View {
             }
             HStack(spacing: 10) {
                 if let name = idea.sourceName { Label(name, systemImage: "link") }
-                if !idea.voiceNotes.isEmpty { Label("\(idea.voiceNotes.count)", systemImage: "waveform") }
+                if !idea.notes.isEmpty { Label("\(idea.notes.count)", systemImage: "waveform") }
                 ForEach(idea.tags.prefix(3), id: \.self) { Text("#\($0)") }
                 Spacer()
                 Text(idea.updatedAt, format: .relative(presentation: .named))

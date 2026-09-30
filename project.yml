@@ -23,11 +23,15 @@ targets:
       path: App/IdeaBox.entitlements
       properties:
         com.apple.security.application-groups: [group.com.vincenzo.ideabox]
+        com.apple.developer.icloud-container-identifiers: [iCloud.com.vincenzo.ideabox]
+        com.apple.developer.icloud-services: [CloudKit]
+        aps-environment: development
     info:
       path: App/Info.plist
       properties:
         CFBundleDisplayName: Idee
         UILaunchScreen: {}
+        UIBackgroundModes: [remote-notification]
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         NSMicrophoneUsageDescription: Serve per registrare le tue note vocali.
         NSSpeechRecognitionUsageDescription: Serve per trascrivere le note vocali in testo.
@@ -42,6 +46,8 @@ targets:
       path: ShareExtension/ShareExtension.entitlements
       properties:
         com.apple.security.application-groups: [group.com.vincenzo.ideabox]
+        com.apple.developer.icloud-container-identifiers: [iCloud.com.vincenzo.ideabox]
+        com.apple.developer.icloud-services: [CloudKit]
     info:
       path: ShareExtension/Info.plist
       properties:

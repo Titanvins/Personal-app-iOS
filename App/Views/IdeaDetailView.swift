@@ -33,13 +33,13 @@ struct IdeaDetailView: View {
             }
 
             Section("Note vocali") {
-                ForEach(idea.voiceNotes.sorted { $0.createdAt < $1.createdAt }) { note in
+                ForEach(idea.notes.sorted { $0.createdAt < $1.createdAt }) { note in
                     VoiceNoteRow(note: note, idea: idea, player: player)
                 }
                 .onDelete { offsets in
-                    let sorted = idea.voiceNotes.sorted { $0.createdAt < $1.createdAt }
+                    let sorted = idea.notes.sorted { $0.createdAt < $1.createdAt }
                     for i in offsets {
-                        try? FileManager.default.removeItem(at: sorted[i].url)
+                        try? FileManager.default.removeItem(at: sorted[i].fileURL)
                         context.delete(sorted[i])
                     }
                 }

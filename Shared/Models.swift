@@ -17,12 +17,14 @@ final class Idea {
     var sourceTitle: String?
 
     @Relationship(deleteRule: .cascade, inverse: \VoiceNote.idea)
-    var voiceNotes: [VoiceNote] = []
+    var voiceNotes: [VoiceNote]?   // CloudKit richiede relazioni opzionali
 
     init(title: String = "", text: String = "") {
         self.title = title
         self.text = text
     }
+
+    var notes: [VoiceNote] { voiceNotes ?? [] }
 
     var displayTitle: String {
         if !title.isEmpty { return title }
@@ -31,11 +33,11 @@ final class Idea {
     }
 
     var isEmpty: Bool {
-        title.isEmpty && text.isEmpty && voiceNotes.isEmpty && sourceURL == nil
+        title.isEmpty && text.isEmpty && notes.isEmpty && sourceURL == nil
     }
 
     var searchableText: String {
-        ([title, text, sourceName ?? "", sourceTitle ?? ""] + tags + voiceNotes.compactMap(\.transcript))
+        ([title, text, sourceName ?? "", sourceTitle ?? ""] + tags + notes.compactMap(\.transcript))
             .joined(separator: " ")
     }
 }
@@ -48,6 +50,8 @@ final class VoiceNote {
     var duration: TimeInterval = 0
     var createdAt: Date = Date.now
     var transcript: String?
+    /// L'audio vive nel database (asset CloudKit) così si sincronizza; il file su disco è solo una cache.
+    @Attribute(.externalStorage) var audioData: Data?
     var idea: Idea?
 
     init(fileName: String, duration: TimeInterval) {
@@ -55,5 +59,14 @@ final class VoiceNote {
         self.duration = duration
     }
 
-    var url: URL { AppGroup.audioDirectory.appending(path: fileName) }
+    var fileURL: URL { AppGroup.audioDirectory.appending(path: fileName) }
+
+    /// File riproducibile: se manca (nota arrivata da un altro dispositivo) lo ricrea dai dati.
+    var url: URL {
+        let u = fileURL
+        if !FileManager.default.fileExists(atPath: u.path), let audioData {
+            try? audioData.write(to: u)
+        }
+        return u
+    }
 }
